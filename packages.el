@@ -16,6 +16,7 @@
 (package! nov-xwidget
   :recipe (:host github :repo "chenyanming/nov-xwidget"))
 
+(package! keycast)
 ;;(package! odin-mode
 ;;  :recipe (:host github :repo "mattt-b/odin-mode"))
 
@@ -64,3 +65,6 @@
 ;; ;; but you can use any other Nerd Font if you want
 ;; (nerd-icons-font-family "FiraCode")
 ;; )
+(package! org-remark)
+(package! denote)
+(package! modus-themes)

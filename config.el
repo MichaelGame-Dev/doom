@@ -158,3 +158,52 @@ modus-themes-completions
 (map! :leader
       (:prefix ("c" . "capture")
        :desc "GameDev in new frame" "g" #'gamedev-capture-in-frame))
+
+
+;; Denote
+(use-package denote
+  :ensure t
+  :hook (dired-mode . denote-dired-mode)
+  :bind
+  (("C-c n n" . denote)
+   ("C-c n r" . denote-rename-file)
+   ("C-c n l" . denote-link)
+   ("C-c n b" . denote-backlinks)
+   ("C-c n d" . denote-sort-dired))
+  :config
+  (setq denote-directory (expand-file-name "~/org/notes/"))
+
+  ;; Automatically rename Denote buffers when opening them so that
+  ;; instead of their long file name they have, for example, a literal
+  ;; "[D]" followed by the file's title.  Read the doc string of
+  ;; `denote-rename-buffer-format' for how to modify this.
+  (denote-rename-buffer-mode 1))
+
+
+;; org remark
+(use-package org-remark-global-tracking
+  ;; It is recommended that `org-remark-global-tracking-mode' be
+  ;; enabled when Emacs initializes. You can set it in
+  ;; `after-init-hook'.
+  :hook after-init
+  :config
+  ;; Selectively keep or comment out the following if you want to use
+  ;; extensions for Info-mode, EWW, and NOV.el (EPUB) respectively.
+  (use-package org-remark-info :after info :config (org-remark-info-mode +1))
+  (use-package org-remark-eww  :after eww  :config (org-remark-eww-mode +1))
+  (use-package org-remark-nov  :after nov  :config (org-remark-nov-mode +1)))
+
+(use-package! org-remark
+  :bind (;; :bind keyword also implicitly defers org-remark itself.
+         ;; Keybindings before :map is set for global-map. Adjust the keybinds
+         ;; as you see fit.
+         ("C-c n m" . org-remark-mark)
+         ("C-c n l" . org-remark-mark-line)
+         :map org-remark-mode-map
+         ("C-c n o" . org-remark-open)
+         ("C-c n ]" . org-remark-view-next)
+         ("C-c n [" . org-remark-view-prev)
+         ;; ("C-c n r" . org-remark-remove)
+         ("C-c n -" . org-remark-delete)))
+
+(keycast-header-line-mode t)
