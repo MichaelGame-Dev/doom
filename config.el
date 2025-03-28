@@ -5,7 +5,6 @@
 (setq custom-file (locate-user-emacs-file "custom-gui.el"))
 (load custom-file :no-error-if-file-is-missing)
 
-
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
@@ -208,9 +207,88 @@ modus-themes-completions
 
 (keycast-header-line-mode t)
 
+<<<<<<< HEAD
 
 ;; Text Scaling
 ;; TODO: Load the mode here
 (after! persist-text-scale
   (setq persist-text-scale-autosave-interval (* 7 60))
   (persist-text-scale-mode))
+=======
+;; (add-to-list 'load-path "~/.config/doom/lisp/obs-websocket")
+;; Obs web sockets
+;; (use-package websocket)
+;; (defun my/twitch-message (text)
+;;   (interactive "MText: ")
+;;   (with-current-buffer
+;;       (get-buffer-create "Twitch message")
+;;     (erase-buffer)
+;;     (insert text)
+;;     (goto-char (point-min))))
+;; (use-package! obs-websocket
+;;   :config
+;;   (defhydra my/obs-websocket (:exit t)
+;;             "Control Open Broadcast Studio"
+;;             ("c" (obs-websocket-connect) "Connect")
+;;             ("d" (obs-websocket-send "SetCurrentScene" :scene-name "Desktop") "Desktop")
+;;             ("e" (obs-websocket-send "SetCurrentScene" :scene-name "Emacs") "Emacs")
+;;             ("i" (obs-websocket-send "SetCurrentScene" :scene-name "Intermission") "Intermission")
+;;             ("v" (browse-url "https://twitch.tv/sachachua"))
+;;             ("m" my/twitch-message "Message")
+;;           ("t" my/twitch-message "Message")
+;;           ("<f8>" my/twitch-message "Message") ;; Then I can just f8 f8
+;;           ("sb" (obs-websocket-send "StartStreaming") "Stream - begin")
+;;           ("se" (obs-websocket-send "StopStreaming") "Stream - end"))
+;; (global-set-key (kbd "<f8>") #'my/obs-websocket/body))
+;;  :load-path "~/.config/doom/lisp/obs-websocket.el" :ensure nil);
+(use-package! websocket)
+(use-package! obs-websocket
+  :after websocket
+  :config
+  (setq obs-websocket-url "ws://localhost:4455")
+  (setq obs-websocket-password "your-password-here")
+
+  ;; Define some useful functions
+  (defun my/obs-toggle-recording ()
+    (interactive)
+    (obs-websocket-send "StartStopRecording"))
+
+  (defun my/obs-switch-scene (scene-name)
+    (interactive "sScene name: ")
+    (obs-websocket-send "SetCurrentScene" `(("scene-name" . ,scene-name)))))
+
+;; Set up key bindings
+;; (map! :leader
+;;       (:prefix ("o" . "open")
+;;                (:prefix ("b" . "obs")
+;;                 :desc "Connect to OBS" "c" #'obs-websocket-connect
+;;                 :desc "Toggle recording" "r" #'my/obs-toggle-recording
+;;                 :desc "Switch scene" "s" #'my/obs-switch-scene))))
+(require 'auth-source)
+(let ((client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
+      (client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret")))
+  (if (and client-id client-secret)
+      (setq smudge-oauth2-callback-port "9999")
+    (use-package! smudge
+      :bind-keymap ("C-c ." . smudge-command-map)
+      :custom
+      (smudge-oauth2-client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret"))
+      (smudge-oauth2-client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
+      ;; optional: enable transient map for frequent commands
+      (smudge-player-use-transient-map t)
+      :config
+      ;; optional: display current song in mode line
+      (global-smudge-remote-mode))
+    (message "Spotify credentials not found in auth-source. Smudge not loaded.")))
+
+;; (setq smudge-transport 'connect)
+
+;; Org download to insert screenshots from clipboard
+(after! org-download
+  (setq org-download-method 'directory)
+  (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
+  (setq org-download-image-org-width 600)
+  (setq org-download-link-format "[[file:%s]]\n"
+        org-download-abbreviate-filename-function #'file-relative-name)
+  (setq org-download-link-format-function #'org-download-link-format-function-default))
+>>>>>>> 17758e8205bb953844c7ba766b10f910a2c12a5e
