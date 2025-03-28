@@ -13,6 +13,7 @@
 ;; https://github.com/radian-software/straight.el#the-recipe-format
 ;; (package! another-package
 ;;   :recipe (:host github :repo "username/repo"))
+(package! robe)
 (package! nov-xwidget
   :recipe (:host github :repo "chenyanming/nov-xwidget"))
 
@@ -68,3 +69,8 @@
 (package! org-remark)
 (package! denote)
 (package! modus-themes)
+
+
+(package! persist-text-scale
+  :recipe
+  (:host github :repo "jamescherti/persist-text-scale.el"))

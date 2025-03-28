@@ -24,10 +24,10 @@
 ;; accept. For example:
 ;;; Code:
 (setq doom-font (font-spec :family "FiraCode" :size 13.0 :weight 'Regular)
-      doom-variable-pitch-font (font-spec :family "FiraSans" :size 13.0 :weight 'Regular)
+      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13.0 :weight 'Regular)
       doom-symbol-font (font-spec :famil "FiraCode" :size 13.0))
 
-(setq nerd-icons-font-family "FiraCode")
+(setq nerd-icons-font-family "Fira Code")
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -207,3 +207,10 @@ modus-themes-completions
          ("C-c n -" . org-remark-delete)))
 
 (keycast-header-line-mode t)
+
+
+;; Text Scaling
+;; TODO: Load the mode here
+(after! persist-text-scale
+  (setq persist-text-scale-autosave-interval (* 7 60))
+  (persist-text-scale-mode))
