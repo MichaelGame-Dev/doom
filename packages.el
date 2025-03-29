@@ -59,7 +59,7 @@
 (package! nerd-icons
 
   :recipe (:host github :repo "rainstormstudio/nerd-icons.el"
-                 :files (:defaults "data")))
+           :files (:defaults "data")))
 ;; :custom
 ;; ;; The Nerd Font you want to use in GUI
 ;; ;; "Symbols Nerd Font Mono" is the default and is recommended
@@ -69,13 +69,11 @@
 (package! org-remark)
 (package! denote)
 (package! modus-themes)
-<<<<<<< HEAD
 
 
 (package! persist-text-scale
   :recipe
   (:host github :repo "jamescherti/persist-text-scale.el"))
-=======
 (package! websocket)
 
 ;; (use-package obs-websocket
@@ -84,4 +82,3 @@
 (package! obs-websocket
   :recipe (:host github :repo "sachac/obs-websocket-el"))
 (package! smudge)
->>>>>>> 17758e8205bb953844c7ba766b10f910a2c12a5e

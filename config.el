@@ -207,14 +207,13 @@ modus-themes-completions
 
 (keycast-header-line-mode t)
 
-<<<<<<< HEAD
 
 ;; Text Scaling
 ;; TODO: Load the mode here
 (after! persist-text-scale
   (setq persist-text-scale-autosave-interval (* 7 60))
   (persist-text-scale-mode))
-=======
+
 ;; (add-to-list 'load-path "~/.config/doom/lisp/obs-websocket")
 ;; Obs web sockets
 ;; (use-package websocket)
@@ -291,4 +290,3 @@ modus-themes-completions
   (setq org-download-link-format "[[file:%s]]\n"
         org-download-abbreviate-filename-function #'file-relative-name)
   (setq org-download-link-format-function #'org-download-link-format-function-default))
->>>>>>> 17758e8205bb953844c7ba766b10f910a2c12a5e
