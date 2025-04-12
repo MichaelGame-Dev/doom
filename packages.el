@@ -82,3 +82,8 @@
 (package! obs-websocket
   :recipe (:host github :repo "sachac/obs-websocket-el"))
 (package! smudge)
+
+
+(package! eglot-booster
+  :recipe (:host github :repo "jdtsmith/eglot-booster"))
+(package! org-timeblock)

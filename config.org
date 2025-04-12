@@ -1,3 +1,33 @@
+#+title: Config
+#+OPTIONS: toc:2
+
+* Contents :toc:
+- [[#doom-emacs-config][Doom Emacs Config]]
+  - [[#notes][Notes]]
+  - [[#init][Init]]
+  - [[#config][Config]]
+  - [[#org][Org]]
+  - [[#packages][Packages]]
+
+* Doom Emacs Config
+** Notes
+NOTE: This is my personal config, I am open to suggestions but this isn't intended to accept much in the way of pull requests. If you find an error definitely let me know, but my only requirements are this works on my machine.
+
+This is mainly out there for version control, I'm leaving it public to provide inspiration to others. I'm still very new to emacs, so this likely sucks.
+
+
+** Init
+:PROPERTIES:
+:header-args:elisp: :tangle "~/.config/doom/init_tangle.el"
+:END:
+This is my doom init.el file. The comments and doom function are folded due to their length
+*** Doom comments
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+This is the standard doom comments
+#+begin_src elisp
+
 ;;; init.el -*- lexical-binding: t; -*-
 
 ;; This file controls what Doom modules are enabled and what order they load
@@ -13,7 +43,14 @@
 ;;
 ;;      Alternatively, press 'gd' (or 'C-c c d') on a module to browse its
 ;;      directory (for easy access to its source code).
+#+end_src
 
+*** Doom! function
+:PROPERTIES:
+:VISIBILITY: folded
+:END:
+Here's my doom! block
+#+begin_src elisp
 (doom! :input
        ;;bidi              ; (tfel ot) thgir etirw uoy gnipleh
        ;;chinese
@@ -35,15 +72,15 @@
        ;;doom-quit         ; DOOM quit-message prompts when you quit Emacs
        ;;(emoji +unicode)  ; 🙂
        hl-todo           ; highlight TODO/FIXME/NOTE/DEPRECATED/HACK/REVIEW
-       indent-guides     ; highlighted indent columns
+       ;;indent-guides     ; highlighted indent columns
        ligatures         ; ligatures and symbols to make your code pretty again
-       minimap           ; show a map of the code on the side
+       ;;minimap           ; show a map of the code on the side
        modeline          ; snazzy, Atom-inspired modeline, plus API
        ;;nav-flash         ; blink cursor line after big motions
        ;;neotree           ; a project drawer, like NERDTree for vim
        ophints           ; highlight the region an operation acts on
        (popup +defaults)   ; tame sudden yet inevitable temporary windows
-       tabs              ; a tab bar for Emacs
+       ;;tabs              ; a tab bar for Emacs
        ;;treemacs          ; a project drawer, like neotree but cooler
        ;;unicode           ; extended unicode support for various languages
        (vc-gutter +pretty) ; vcs diff in the fringe
@@ -96,7 +133,7 @@
        ;;ein               ; tame Jupyter notebooks with emacs
        (eval +overlay)     ; run code, run (also, repls)
        lookup              ; navigate your code and its documentation
-       (lsp +eglot)              ; M-x vscode
+       lsp               ; M-x vscode
        magit             ; a git porcelain for Emacs
        ;;make              ; run make tasks from Emacs
        ;;pass              ; password manager for nerds
@@ -114,7 +151,7 @@
        :lang
        ;;agda              ; types of types of types of types...
        ;;beancount         ; mind the GAAP
-       (cc +lsp)         ; C > C++ == 1
+       ;;(cc +lsp)         ; C > C++ == 1
        ;;clojure           ; java with a lisp
        ;;common-lisp       ; if you've seen one lisp, you've seen them all
        ;;coq               ; proofs-as-programs
@@ -123,7 +160,7 @@
        ;;data              ; config/data formats
        ;;(dart +flutter)   ; paint ui and not much else
        ;;dhall
-       (elixir +lsp)            ; erlang done right
+       ;;elixir            ; erlang done right
        ;;elm               ; care for a cup of TEA?
        emacs-lisp        ; drown in parentheses
        ;;erlang            ; an elegant language for a more civilized age
@@ -134,7 +171,7 @@
        ;;fsharp            ; ML stands for Microsoft's Language
        ;;fstar             ; (dependent) types and (monadic) effects and Z3
        ;;gdscript          ; the language you waited for
-       (go +lsp)         ; the hipster dialect
+       ;;(go +lsp)         ; the hipster dialect
        ;;(graphql +lsp)    ; Give queries a REST
        ;;(haskell +lsp)    ; a language that's lazier than I am
        ;;hy                ; readability of scheme w/ speed of python
@@ -150,9 +187,9 @@
        ;;lua               ; one-based indices? one-based indices
        markdown          ; writing docs for people to ignore
        ;;nim               ; python + lisp at the speed of c
-       nix               ; I hereby declare "nix geht mehr!"
+       ;;nix               ; I hereby declare "nix geht mehr!"
        ;;ocaml             ; an objective camel
-       (org +protocol +dragndrop)               ; organize your plain life in plain text
+       (org +dragndrop)               ; organize your plain life in plain text
        ;;php               ; perl's insecure younger brother
        ;;plantuml          ; diagrams for confusing people more
        ;;graphviz          ; diagrams for confusing yourself even more
@@ -163,7 +200,7 @@
        ;;raku              ; the artist formerly known as perl6
        ;;rest              ; Emacs as a REST client
        ;;rst               ; ReST in peace
-       (ruby +rbenv +eglot +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
+       (ruby +rbenv +lsp +rails)     ; 1.step {|i| p "Ruby is #{i.even? ? 'love' : 'life'}"}
        ;;(rust +lsp)       ; Fe2O3.unwrap().unwrap().unwrap().unwrap()
        ;;scala             ; java, but good
        ;;(scheme +guile)   ; a fully conniving family of lisps
@@ -182,17 +219,53 @@
        ;;(wanderlust +gmail)
 
        :app
-       calendar
+       ;;calendar
        ;;emms
        ;;everywhere        ; *leave* Emacs!? You must be joking
-       irc               ; how neckbeards socialize
-       (rss +org)        ; emacs as an RSS reader
+       ;;irc               ; how neckbeards socialize
+       ;;(rss +org)        ; emacs as an RSS reader
 
        :config
        ;;literate
        (default +bindings +smartparens)
        :custom
        gamedev-capture)
+
+#+end_src
+
+*** Add to list
+These are probably ultimately in the wrong place, but I have them here for now.
+
+#+begin_src elisp
+
 (add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode))
 
 (add-to-list 'auto-mode-alist '("\\.odin\\'" . odin-ts-mode))
+#+end_src
+** Config
+*** Doom specific
+*** Other Stuff
+** Org
+By default Doom has some nice stuff added to org
+
+*** Org Tempo Blocks
+By default, there are several blocks available. The default ones can be seen here: [[help:org-structure-template-alist]] I wanted an elisp one and a ruby one. These are very simple to setup, but, best I can tell, to use custom ones you MUST enable org-tempo. I'm using doom's [[help:after!]] to load org first.
+Typing ~<se~ and pressing TAB will expand this into a elisp code block
+#+begin_src elisp
+;;; after org add org-tempo and add org-structure-templates
+(when (member (system-name)"gamedev" "Laptop")
+(after! org
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("se" . "src elisp"))
+  (add-to-list 'org-structure-template-alist '("sr" . "src ruby")))
+)
+#+end_src
+*** Work Org Captures
+**** Meetings
+
+**** Tickets?
+
+****
+*** Home/Game Dev Org Captures
+**** Game Dev Resources
+** Packages

@@ -2,8 +2,9 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
-(setq custom-file (locate-user-emacs-file "custom-gui.el"))
+(setopt custom-file (locate-user-emacs-file "custom-gui.el"))
 (load custom-file :no-error-if-file-is-missing)
+(add-to-list 'load-path (expand-file-name "lisp" doom-private-dir))
 
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
@@ -22,11 +23,11 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;; Code:
-(setq doom-font (font-spec :family "FiraCode" :size 13.0 :weight 'Regular)
-      doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13.0 :weight 'Regular)
-      doom-symbol-font (font-spec :famil "FiraCode" :size 13.0))
+(setopt doom-font (font-spec :family "FiraCode" :size 13.0 :weight 'Regular)
+        doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13.0 :weight 'Regular)
+        doom-symbol-font (font-spec :famil "FiraCode" :size 13.0))
 
-(setq nerd-icons-font-family "Fira Code")
+(setopt nerd-icons-font-family "Fira Code")
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
 ;; up, `M-x eval-region' to execute elisp code, and 'M-x doom/reload-font' to
 ;; refresh your font settings. If Emacs still can't find your font, it likely
@@ -38,21 +39,22 @@
 ;;(setq doom-theme 'doom-onei)
 ;;
 (require 'modus-themes)
-(setq modus-themes-italic-constructs t
-      modus-themes-bold-constructs nil)
+(setopt modus-themes-italic-constructs t
+        modus-themes-bold-constructs nil)
 modus-themes-completions
 '((matches . (extrabold))
   (selection . (semibold italic text-also)))
-(setq modus-themes-disable-other-themes t)
-(setq doom-theme 'modus-vivendi)
+(setopt modus-themes-disable-other-themes t)
+
+(setopt doom-theme 'modus-vivendi)
 ;;(load-theme 'modus-vivendi :no-confirm)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
-(setq display-line-numbers-type 'relative)
+(setopt display-line-numbers-type 'relative)
 
 ;; If you use `org' and don't want your org files in the default location below,
 ;; change `org-directory'. It must be set before org loads!
-(setq org-directory "~/org/")
+(setopt org-directory "~/org/")
 
 ;; (use-package nov-xwidget
 ;;   :demand t
@@ -62,8 +64,8 @@ modus-themes-completions
 ;;   (add-hook 'nov-mode-hook 'nov-xwidget-inject-all-files))
 ;; ;; Whenever you reconfigure a package, make sure to wrap your config in an
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
-(setq nov-unzip-program (executable-find "bsdtar")
-      nov-unzip-args '("-xC" directory "-f" filename))
+(setopt nov-unzip-program (executable-find "bsdtar")
+        nov-unzip-args '("-xC" directory "-f" filename))
 ;;
 ;;   (after! PACKAGE
 ;;     (setq x y))
@@ -211,7 +213,7 @@ modus-themes-completions
 ;; Text Scaling
 ;; TODO: Load the mode here
 (after! persist-text-scale
-  (setq persist-text-scale-autosave-interval (* 7 60))
+  (setopt persist-text-scale-autosave-interval (* 7 60))
   (persist-text-scale-mode))
 
 ;; (add-to-list 'load-path "~/.config/doom/lisp/obs-websocket")
@@ -244,8 +246,8 @@ modus-themes-completions
 (use-package! obs-websocket
   :after websocket
   :config
-  (setq obs-websocket-url "ws://localhost:4455")
-  (setq obs-websocket-password "your-password-here")
+  (setopt obs-websocket-url "ws://localhost:4455")
+  (setopt obs-websocket-password "your-password-here")
 
   ;; Define some useful functions
   (defun my/obs-toggle-recording ()
@@ -253,7 +255,7 @@ modus-themes-completions
     (obs-websocket-send "StartStopRecording"))
 
   (defun my/obs-switch-scene (scene-name)
-    (interactive "sScene name: ")
+    (interactive "Scene name: ")
     (obs-websocket-send "SetCurrentScene" `(("scene-name" . ,scene-name)))))
 
 ;; Set up key bindings
@@ -284,9 +286,32 @@ modus-themes-completions
 
 ;; Org download to insert screenshots from clipboard
 (after! org-download
-  (setq org-download-method 'directory)
-  (setq org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
-  (setq org-download-image-org-width 600)
-  (setq org-download-link-format "[[file:%s]]\n"
-        org-download-abbreviate-filename-function #'file-relative-name)
-  (setq org-download-link-format-function #'org-download-link-format-function-default))
+  (setopt org-download-method 'directory)
+  (setopt org-download-image-dir (concat (file-name-sans-extension (buffer-file-name)) "-img"))
+  (setopt org-download-image-org-width 600)
+  (setopt org-download-link-format "[[file:%s]]\n"
+          org-download-abbreviate-filename-function #'file-relative-name)
+  (setopt org-download-link-format-function #'org-download-link-format-function-default))
+
+
+(after! org
+  (require 'org-tempo)
+  (add-to-list 'org-structure-template-alist '("se" . "src elisp"))
+  (add-to-list 'org-structure-template-alist '("sr" . "src ruby"))
+  (add-to-list 'org-capture-templates
+               '("d" "DR Code Snippet" entry
+                 (file "~/org/dr_snippets.org")
+                 "* %^{Title}\n%^{Description}p\n#+begin_src ruby\n%c\n#+end_src\n"))
+  (add-to-list 'org-capture-templates
+               '("s" "Schedule entry" entry
+                 (file+datetree+prompt "~/org/schedule.org")
+                 "* %^{Timecode}\nDescr: %^{Description}\nCLOCK: %^T--%^T \n:PROPERTIES:\n:TIMECODE: %\\1\n:END:")))
+;; (add-to-list 'org-capture-templates
+;; '("s" "Schedule entry" entry
+;; (file+datetree+prompt "~/org/schedule.org")
+;; "* %^{Timecode}\nDescr: %^{Description}\nSCHEDULED: <%<%Y-%m-%d %a %^{Time}>> \n:PROPERTIES:\n:TIMECODE: %\\1\n:END:")))
+
+
+(use-package eglot-booster
+  :after eglot
+  :config (eglot-booster-mode))
