@@ -5,7 +5,7 @@
 (setopt custom-file (locate-user-emacs-file "custom-gui.el"))
 (load custom-file :no-error-if-file-is-missing)
 (add-to-list 'load-path (expand-file-name "lisp" doom-private-dir))
-
+(setopt highlight-indent-guides-method  'column)
 ;; Some functionality uses this to identify you, e.g. GPG configuration, email
 ;; clients, file templates and snippets. It is optional.
 ;; (setq user-full-name "John Doe"
@@ -66,7 +66,7 @@ modus-themes-completions
 ;; `after!' block, otherwise Doom's defaults may override your settings. E.g.
 (setopt nov-unzip-program (executable-find "bsdtar")
         nov-unzip-args '("-xC" directory "-f" filename))
-;;
+(setopt flycheck-checker-error-threshold 2000)
 ;;   (after! PACKAGE
 ;;     (setq x y))
 ;;
@@ -100,7 +100,7 @@ modus-themes-completions
 ;; Ruby LSP
 ;; Enable odin-mode and configure OLS as the language server
 (use-package! odin-ts-mode
-  :mode ("\\.odin\\'" . odin-mode))
+  :mode ("\\.odin\\'" . odin-ts-mode))
 ;;:hook (odin-ts-mode . eglot))
 
 ;; Add OLS to the list of available programs
@@ -266,21 +266,22 @@ modus-themes-completions
 ;;                 :desc "Toggle recording" "r" #'my/obs-toggle-recording
 ;;                 :desc "Switch scene" "s" #'my/obs-switch-scene))))
 (require 'auth-source)
-(let ((client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
-      (client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret")))
-  (if (and client-id client-secret)
-      (setq smudge-oauth2-callback-port "9999")
-    (use-package! smudge
-      :bind-keymap ("C-c ." . smudge-command-map)
-      :custom
-      (smudge-oauth2-client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret"))
-      (smudge-oauth2-client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
-      ;; optional: enable transient map for frequent commands
-      (smudge-player-use-transient-map t)
-      :config
-      ;; optional: display current song in mode line
-      (global-smudge-remote-mode))
-    (message "Spotify credentials not found in auth-source. Smudge not loaded.")))
+;; (let ((client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
+;;       (client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret")))
+;;   (if (and client-id client-secret)
+;;       (setq smudge-oauth2-callback-port "9999")
+(setopt smudge-oauth2-callback-port "9999")
+(use-package! smudge
+  :bind-keymap ("C-c ." . smudge-command-map)
+  :custom
+  (smudge-oauth2-client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret"))
+  (smudge-oauth2-client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
+  ;; optional: enable transient map for frequent commands
+  (smudge-player-use-transient-map t)
+  :config
+  ;; optional: display current song in mode line
+  (global-smudge-remote-mode))
+;; (message "Spotify credentials not found in auth-source. Smudge not loaded.")))
 
 ;; (setq smudge-transport 'connect)
 
@@ -315,3 +316,294 @@ modus-themes-completions
 (use-package eglot-booster
   :after eglot
   :config (eglot-booster-mode))
+
+
+;; (defun my/setup-project-three-window-layout ()
+;;   "Create a 3-window layout for the current project.
+;;    - Main window in center (larger)
+;;    - Window on left
+;;    - Window on right with first .org file found in project"
+;;   (interactive)
+;;   (when (projectile-project-p)
+;;     (let* ((project-root (projectile-project-root))
+;;            (org-files (directory-files-recursively project-root "\\.org$"))
+;;            (first-org-file (car org-files)))
+
+;;       ;; Start with a single window
+;;       (delete-other-windows)
+
+;;       ;; Create left window (30% width)
+;;       (let ((left-window (split-window-horizontally (floor (* (window-width) 0.3)))))
+;;         ;; Create right window from main window (leaves main in middle)
+;;         (let ((main-window (selected-window))
+;;               (right-window (split-window-horizontally (floor (* (window-width) 0.66)))))
+
+;;           ;; Open org file in right window
+;;           (when first-org-file
+;;             (select-window right-window)
+;;             (find-file first-org-file))
+
+;;           ;; Go back to main window
+;;           (select-window main-window)
+
+;;           ;; Optional: Add a message if no org files found
+;;           (unless first-org-file
+;;             (message "No .org files found in project")))))))
+
+;; (defun my/setup-project-three-window-layout ()
+;;   "Create a 3-window layout for the current project with a larger middle window."
+;; (interactive)
+;; (when (projectile-project-p)
+;;   (let* ((project-root (projectile-project-root))
+;;          (org-files (directory-files-recursively project-root "\\.org$"))
+;;          (first-org-file (car org-files)))
+
+;;     ;; Start fresh with a single window
+;;     (delete-other-windows)
+
+;;     ;; First split creates left and temp-right
+;;     (let ((left-window (split-window-horizontally (floor (* (window-width) 0.25)))))
+;;       ;; Now create middle and right from the temp-right window
+;;       (let ((middle-window (selected-window)))
+;;         ;; Create right window (30% of total width)
+;;         (split-window-horizontally (- (floor (* (window-total-width) 0.7))))
+
+;;         ;; Select windows and open content
+;;         (when first-org-file
+;;           (windmove-right)
+;;           (find-file first-org-file))
+
+;;         ;; Return to middle window (which should be 45% of width)
+;;         (select-window middle-window)
+
+;;         ;; Display buffer list in left window
+;;         (windmove-left)
+;;         (list-buffers)
+
+;;         ;; Return to middle window again
+;;         (windmove-right)
+
+;;         (message "Layout created: Left (25%%), Center (45%%), Right (30%%)")
+;;         (when first-org-file
+;;           (message "Opened org file: %s" first-org-file))
+;; (unless first-org-file
+;;   (message "No .org files found in project")))))))
+
+;; (defun my/setup-project-three-window-layout ()
+;;   "Create a 3-window layout for the current project with a larger middle window.
+;;    Ensures the org file opens in the right window."
+;;   (interactive)
+;;   (when (projectile-project-p)
+;;     (let* ((project-root (projectile-project-root))
+;;            (org-files (directory-files-recursively project-root "\\.org$"))
+;;            (first-org-file (car org-files))
+;;            (total-width (frame-width))
+;;            (left-size (floor (* total-width 0.25)))
+;;            (right-size (floor (* total-width 0.30)))
+;;      (middle-size (- total-width left-size right-size)))
+
+;; ;; Start fresh with a single window
+;; (delete-other-windows)
+
+;; ;; Step 1: Create left and remaining window
+;; (split-window-horizontally left-size)
+;; (windmove-right)  ;; Move to the right (future middle+right area)
+
+;; ;; Step 2: From the right portion, create middle and right windows
+;; (let ((middle-window (selected-window)))
+;;   (split-window-horizontally (- (window-width) right-size))
+
+;;   ;; Step 3: Navigate to right window and open org file
+;;   (windmove-right)
+;;   (when first-org-file
+;;     (find-file first-org-file))
+
+;;   ;; Step 4: Navigate to left window and show buffer list
+;;   (windmove-left)  ;; Go to middle
+;;   (windmove-left)  ;; Go to left
+;;   (list-buffers)
+
+;;   ;; Step 5: Return to middle window for final position
+;;   (windmove-right)  ;; Back to middle
+
+;;   ;; Adjust window sizes if needed
+;;   (balance-windows)
+
+;;   ;; Report status
+;;   (message "Layout created with org file on the right")
+;;   (unless first-org-file
+;;     (message "No .org files found in project"))))))
+
+
+;; (defun my/setup-project-three-window-layout ()
+;;   "Create a 3-window layout for the current project:
+;;    - Left window (25%): vterm in project root
+;;    - Middle window (45%): current buffer
+;;    - Right window (30%): first .org file found"
+;;   (interactive)
+;;   (if (not (projectile-project-p))
+;;       (message "Not in a project. Please open a project first.")
+;;     (let* ((project-root (projectile-project-root))
+;;            (org-files (directory-files-recursively project-root "\\.org$"))
+;;            (first-org-file (car org-files))
+;;            (current-buffer (current-buffer)))
+
+;;       ;; Debugging info
+;;       (message "Project root: %s" project-root)
+;;       (message "Found org files: %d" (length org-files))
+;;       (when first-org-file (message "Will open: %s" first-org-file))
+
+;;       ;; Start fresh
+;;       (delete-other-windows)
+
+;;       ;; Remember current buffer
+;;       (let ((original-buffer current-buffer))
+
+;;         ;; Create left window (25%)
+;;         (split-window-horizontally (floor (* (frame-width) 0.25)))
+
+;;         ;; We're now in the right portion (75%)
+;; Create right window (40% of remaining space, ~30% of total)
+;; (split-window-horizontally (floor (* (window-width) 0.6)))
+
+;; ;; Now configure each window with appropriate content
+
+;; ;; 1. Configure right window with org file
+;; (other-window 1)  ;; Move to right window
+;; (when first-org-file
+;;   (find-file first-org-file)
+;;   (message "Opened org file in right window"))
+
+;; ;; 2. Configure left window with vterm
+;; (other-window 1)  ;; This will cycle to left window
+;; (cd project-root)  ;; Ensure we're in project root
+;; (call-interactively '+vterm/here)
+;; (message "Opened vterm in left window")
+
+;; ;; 3. Return to middle window and restore original buffer
+;; (other-window 1)  ;; Back to middle
+;; (switch-to-buffer original-buffer)
+;; (message "Restored %s in middle window" (buffer-name original-buffer))))))
+(defun my/setup-project-three-window-layout ()
+  "Create a 3-window layout for the current project:
+   - Left window (25%): vterm in project root
+   - Middle window (45%): current buffer (preserved)
+   - Right window (30%): first .org file found"
+  (interactive)
+  (if (not (projectile-project-p))
+      (message "Not in a project. Please open a project first.")
+    (let* ((project-root (projectile-project-root))
+           (org-files (directory-files-recursively project-root "\\.org$"))
+           (first-org-file (car org-files))
+           (current-buffer (current-buffer)))
+
+      ;; Start fresh
+      (delete-other-windows)
+
+      ;; Save original buffer
+      (let ((original-buffer current-buffer))
+
+        ;; First split - creates left window (active) and right portion
+        (split-window-horizontally (floor (* (frame-width) 0.25)))
+
+        ;; We're still in the LEFT window at this point
+        ;; Configure left window with vterm
+        (cd project-root)
+        (call-interactively '+vterm/here)
+
+        ;; Move to right portion
+        (other-window 1)
+
+        ;; Second split - divides right portion into middle and right windows
+        (split-window-horizontally (floor (* (window-width) 0.6)))
+
+        ;; We're now in the MIDDLE window
+        ;; Ensure original buffer is restored here
+        (switch-to-buffer original-buffer)
+
+        ;; Move to right window
+        (other-window 1)
+
+        ;; Open org file in right window
+        (when first-org-file
+          (find-file first-org-file)
+          (message "Opened org file in right window"))
+
+        ;; Return to middle window for final position
+        (other-window -1)
+
+        (message "Layout complete with vterm (left), current buffer (middle), org file (right)")))))
+
+;; Bind it to a key
+(map! :leader "z 3" #'my/setup-project-three-window-layout)
+
+
+(defun my/timecode-summary-by-day ()
+  "Generate a summary of time spent by timecode for each day."
+  (interactive)
+  (let ((buf (get-buffer-create "*Timecode Daily Summary*"))
+        (date-entries '())
+        (start-date (org-read-date nil nil "-1w")) ;lastweek
+        (end-date (org-read-date nil nil "+1w")))  ;thisweek end
+
+    ;; Collect all clocked entries with timecodes in the date range
+    (org-map-entries
+     (lambda ()
+       (let ((clocks (org-entry-get-multivalued-property (point) "CLOCK"))
+             (timecode (org-entry-get (point) "TIMECODE")))
+         (when (and clocks timecode)
+           (dolist (clock clocks)
+             (when (string-match org-ts-regexp-inactive clock)
+               (let* ((start-time (match-string 1 clock))
+                      (date (substring start-time 0 10)))
+                 (when (and (string<= start-date date)
+                            (string<= date end-date))
+                   (if (string-match "=>\\s-*\\([0-9]+:[0-9]+\\)" clock)
+                       (let ((duration (match-string 1 clock)))
+                         (push (list date timecode duration) date-entries))))))))))
+     nil
+     (list (buffer-file-name)))
+
+    ;; Process and display the results
+    (with-current-buffer buf
+      (erase-buffer)
+      (org-mode)
+      (insert "#+TITLE: Daily Timecode Summary\n\n")
+
+      ;; Group by date
+      (let ((dates (delete-dups (mapcar 'car date-entries))))
+        (setq dates (sort dates 'string<))
+        (dolist (date dates)
+          (insert (format "* %s\n" date))
+          (insert "| TIMECODE | Hours |\n")
+          (insert "|----------+-------|\n")
+
+          ;; Group by timecode for this date
+          (let ((timecodes (make-hash-table :test 'equal)))
+            (dolist (entry date-entries)
+              (when (equal date (car entry))
+                (let* ((tc (nth 1 entry))
+                       (dur (nth 2 entry))
+                       (minutes (org-duration-to-minutes dur))
+                       (current (gethash tc timecodes 0)))
+                  (puthash tc (+ current minutes) timecodes))))
+
+            ;; Insert each timecode for this date
+            (maphash (lambda (tc minutes)
+                       (insert (format "| %s | %s |\n"
+                                       tc
+                                       (org-duration-from-minutes minutes))))
+                     timecodes)
+
+            ;; Calculate total
+            (let ((total 0))
+              (maphash (lambda (_ minutes) (setq total (+ total minutes))) timecodes)
+              (insert "|----------+-------|\n")
+              (insert (format "| *Total* | %s |\n\n"
+                              (org-duration-from-minutes total))))))))
+
+    (switch-to-buffer buf)
+    (goto-char (point-min))))
+
+(add-to-list 'treesit-language-source-alist
+             '(odin  "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
