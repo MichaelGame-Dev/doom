@@ -19,8 +19,8 @@
 
 (package! keycast)
 
-;; (package! odin-mode
-;;   :recipe (:host github :repo "mattt-b/odin-mode"))
+(package! odin-mode
+  :recipe (:host github :repo "mattt-b/odin-mode"))
 
 (package! odin-ts-mode
   :recipe (:host github :repo "Sampie159/odin-ts-mode"))
@@ -88,3 +88,9 @@
 (package! eglot-booster
   :recipe (:host github :repo "jdtsmith/eglot-booster"))
 (package! org-timeblock)
+;; (package! ox-hugo)
+;;
+;; (package! lsp-tailwindcss :recipe (:host github :repo "merrickluo/lsp-tailwindcss"))
+(package! mise)
+;; (package! xclip)
+(package! yari :recipe (:host github :repo "hron/yari.el"))

@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sprite
+# key: sprite
+# --
+{x: ${1:640}, y: ${2:360}, w: ${3:100}, h: ${4:100}, path: '${5:logo.png}'}
+$0

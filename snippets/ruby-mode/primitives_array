@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: Primitives Array
+# key: <<prim
+# --
+
+args.outputs.primitives << $1

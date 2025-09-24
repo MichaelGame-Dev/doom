@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: line
+# key: ln
+# --
+{ x: $1, y: $2, x2: $3, y2: $4, $5}
+$0

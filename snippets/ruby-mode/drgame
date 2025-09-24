@@ -1,0 +1,14 @@
+# -*- mode: snippet -*-
+# name: drgame
+# key: drgame
+# --
+class Game
+  attr_gtk
+
+  def initialize
+    $0
+  end
+
+  def tick
+  end
+end

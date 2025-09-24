@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: border
+# key: br
+# --
+{ x: $1, y: $2, w: $3, h: $4, $5, primitive_marker: :border}
+$0

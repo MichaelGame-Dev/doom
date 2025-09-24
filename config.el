@@ -23,9 +23,9 @@
 ;; See 'C-h v doom-font' for documentation and more examples of what they
 ;; accept. For example:
 ;;; Code:
-(setopt doom-font (font-spec :family "FiraCode" :size 13.0 :weight 'Regular)
+(setopt doom-font (font-spec :family "FiraCode Nerd Font Mono" :size 13.0 :weight 'Regular)
         doom-variable-pitch-font (font-spec :family "Fira Sans" :size 13.0 :weight 'Regular)
-        doom-symbol-font (font-spec :famil "FiraCode" :size 13.0))
+        doom-symbol-font (font-spec :famil "FiraCode Nerd Font" :size 13.0))
 
 (setopt nerd-icons-font-family "Fira Code")
 ;; If you or Emacs can't find your font, use 'M-x describe-font' to look them
@@ -99,18 +99,18 @@ modus-themes-completions
 
 ;; Ruby LSP
 ;; Enable odin-mode and configure OLS as the language server
-(use-package! odin-ts-mode
-  :mode ("\\.odin\\'" . odin-ts-mode))
-;;:hook (odin-ts-mode . eglot))
+;; (use-package! odin-mode
+;; :mode ("\\.odin\\'" . odin-mode)
+;; :hook (odin-mode . lsp))
 
 ;; Add OLS to the list of available programs
 ;; NOTE: As of Emacs 30, this is not needed.
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs '((odin-ts-mode) . ("ols"))))
+;; (with-eval-after-load 'eglot
+;;   (add-to-list 'eglot-server-programs '((odin-ts-mode) . ("ols"))))
 
 ;; Add a hook to autostart OLS
-;;(add-hook 'odin-mode-hook #'eglot-ensure)
-(add-hook 'odin-ts-mode-hook #'eglot-ensure) ;; If you're using the TS mode
+;; (add-hook 'odin-mode-hook #'lsp)
+;; (add-hook 'odin-ts-mode-hook #'eglot-ensure) ;; If you're using the TS mode
 
 
 ;; Set up OLS as the language server for Odin, ensuring lsp-mode is loaded first
@@ -270,17 +270,19 @@ modus-themes-completions
 ;;       (client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret")))
 ;;   (if (and client-id client-secret)
 ;;       (setq smudge-oauth2-callback-port "9999")
-(setopt smudge-oauth2-callback-port "9999")
-(use-package! smudge
-  :bind-keymap ("C-c ." . smudge-command-map)
-  :custom
-  (smudge-oauth2-client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret"))
-  (smudge-oauth2-client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
-  ;; optional: enable transient map for frequent commands
-  (smudge-player-use-transient-map t)
-  :config
-  ;; optional: display current song in mode line
-  (global-smudge-remote-mode))
+
+(when (string= (system-name) "gamedev")
+  (setopt smudge-oauth2-callback-port "9999")
+  (use-package! smudge
+    :bind-keymap ("C-c ." . smudge-command-map)
+    :custom
+    (smudge-oauth2-client-secret (auth-source-pick-first-password :host "spotify.com" :user "client-secret"))
+    (smudge-oauth2-client-id (auth-source-pick-first-password :host "spotify.com" :user "client-id"))
+    ;; optional: enable transient map for frequent commands
+    (smudge-player-use-transient-map t)
+    :config
+    ;; optional: display current song in mode line
+    (global-smudge-remote-mode)))
 ;; (message "Spotify credentials not found in auth-source. Smudge not loaded.")))
 
 ;; (setq smudge-transport 'connect)
@@ -293,7 +295,6 @@ modus-themes-completions
   (setopt org-download-link-format "[[file:%s]]\n"
           org-download-abbreviate-filename-function #'file-relative-name)
   (setopt org-download-link-format-function #'org-download-link-format-function-default))
-
 
 (after! org
   (require 'org-tempo)
@@ -484,6 +485,19 @@ modus-themes-completions
 ;; (other-window 1)  ;; Back to middle
 ;; (switch-to-buffer original-buffer)
 ;; (message "Restored %s in middle window" (buffer-name original-buffer))))))
+;;
+;;
+(defun my/grep-dr-docs ()
+  "Grep through the /docs directory in the current project."
+  (interactive "sSearch docs for: ")
+  (let ((default-directory (locate-dominating-file default-directory "docs/")))
+    (if default-directory
+        (grep (concat "grep -r --include=\"*\" -n \"" search-term "\" ./docs/"))
+      (message "No docs directory found in project!"))))
+
+(map! :leader "z s" #'my/grep-dr-docs)
+
+
 (defun my/setup-project-three-window-layout ()
   "Create a 3-window layout for the current project:
    - Left window (25%): vterm in project root
@@ -605,5 +619,103 @@ modus-themes-completions
     (switch-to-buffer buf)
     (goto-char (point-min))))
 
-(add-to-list 'treesit-language-source-alist
-             '(odin  "https://github.com/tree-sitter-grammars/tree-sitter-odin"))
+;; I think this doesn't work because it's a doom emacs thing?
+;; (setopt treesit-language-source-alist
+;;         '((odin "https://github.com/tree-sitter-grammars/tree-sitter-odin")))
+
+;; (use-package! lsp-tailwindcss :after lsp-mode)
+;; (defvar lsp-language-id-configuration
+;; '((".*\\.html\\.erb$" . web-mode)))
+;;   '((".*\\.html\\.erb$" . lsp-tailwindcss)))
+
+;;(add-to-list 'auto-mode-alist '("\\.erb\\'" . web-mode))
+
+;; (defun my/setup-ruby-eglot ()
+;;   "Use eglot with ruby-lsp for Rails projects only."
+;;   (when (and buffer-file-name
+;;              (string-prefix-p (expand-file-name "~/code/rails/")
+;;                               (expand-file-name buffer-file-name)))
+;;     (setq-local eglot-server-programs '((ruby-mode ruby-ts-mode) "ruby-lsp"))
+;;     (eglot-ensure)))
+
+;; (add-hook 'ruby-mode-hook #'my/setup-ruby-eglot)
+
+(defun my/setup-project-two-window-layout ()
+  "Create a 2-window layout for the current project:
+   - Left window (50%): current file in project root
+   - Right window (50%): first .org file found"
+  (interactive)
+  (if (not (projectile-project-p))
+      (message "Not in a project. Please open a project first.")
+    (let* ((project-root (projectile-project-root))
+           (org-files (directory-files-recursively project-root "\\.org$"))
+           (first-org-file (car org-files))
+           (current-buffer (current-buffer)))
+
+      ;; Start fresh
+      (delete-other-windows)
+
+      ;; Save original buffer
+      (let ((original-buffer current-buffer))
+
+        ;; First split - creates left window (active) and right portion
+        ;; (split-window-horizontally (floor (* (frame-width) 0.25)))
+
+        ;; We're still in the LEFT window at this point
+        ;; Configure left window with vterm
+        ;; (cd project-root)
+        ;; (call-interactively '+vterm/here)
+
+        ;; Move to right portion
+        ;; (other-window 1)
+
+        ;; Second split - divides right portion into middle and right windows
+        (split-window-horizontally (floor (* (window-width) 0.5)))
+
+        ;; We're now in the MIDDLE window
+        ;; Ensure original buffer is restored here
+        (switch-to-buffer original-buffer)
+
+        ;; Move to right window
+        (other-window 1)
+
+        ;; Open org file in right window
+        (when first-org-file
+          (find-file first-org-file)
+          (message "Opened org file in right window"))
+
+        ;; Return to middle window for final position
+        (other-window -1)
+
+        (message "Layout updated, current buffer (left), org file (right)")))))
+
+;; Bind it to a key
+(map! :leader "z 2" #'my/setup-project-two-window-layout)
+
+;; (after! lsp-mode
+;;   (set-lsp-priority! 'ruby-lsp-ls 1)  ;; Higher priority
+;;   (set-lsp-priority! 'ruby-ls 0))   ;; Lower priority
+;; (setq wl-copy-process nil)
+;; (defun wl-copy (text)
+;;   (setq wl-copy-process (make-process :name "wl-copy"
+;;                                       :buffer nil
+;;                                       :command '("wl-copy" "-f" "-n")
+;;                                       :connection-type 'pipe
+;;                                       :noquery t))
+;;   (process-send-string wl-copy-process text)
+;;   (process-send-eof wl-copy-process))
+;; (defun wl-paste ()
+;;   (if (and wl-copy-process (process-live-p wl-copy-process))
+;;       nil
+;;     (shell-command-to-string "wl-paste -n | tr -d \r")))
+;; (setq interprogram-cut-function 'wl-copy)
+;; (setq interprogram-paste-function 'wl-paste)
+
+;; (add-hook 'after-init-hook #'global-mise-mode)
+(setq select-enable-primary t)
+;; (use-package! xclip
+;;   :config
+;;   (setq xclip-program "wl-copy")
+;;   (setq xclip-select-enable-clipboard t)
+;;   (setq xclip-mode t)
+;;   (setq xclip-method (quote wl-copy)))
