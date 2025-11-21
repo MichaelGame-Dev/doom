@@ -94,3 +94,5 @@
 (package! mise)
 ;; (package! xclip)
 (package! yari :recipe (:host github :repo "hron/yari.el"))
+
+(package! astro-ts-mode)

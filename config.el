@@ -2,6 +2,15 @@
 
 ;; Place your private configuration here! Remember, you do not need to run 'doom
 ;; sync' after modifying this file!
+(defun my--server()
+  (unless (server-running-p)
+    (server-start)))
+
+(use-package server
+  :ensure nil
+  :config
+  (add-hook 'after-init-hook #'my--server))
+
 (setopt custom-file (locate-user-emacs-file "custom-gui.el"))
 (load custom-file :no-error-if-file-is-missing)
 (add-to-list 'load-path (expand-file-name "lisp" doom-private-dir))
@@ -47,7 +56,7 @@ modus-themes-completions
 (setopt modus-themes-disable-other-themes t)
 
 (setopt doom-theme 'modus-vivendi)
-;;(load-theme 'modus-vivendi :no-confirm)
+(load-theme 'modus-vivendi :no-confirm)
 ;; This determines the style of line numbers in effect. If set to `nil', line
 ;; numbers are disabled. For relative line numbers, set this to `relative'.
 (setopt display-line-numbers-type 'relative)
@@ -710,6 +719,8 @@ modus-themes-completions
 ;;     (shell-command-to-string "wl-paste -n | tr -d \r")))
 ;; (setq interprogram-cut-function 'wl-copy)
 ;; (setq interprogram-paste-function 'wl-paste)
+;;
+;;
 
 ;; (add-hook 'after-init-hook #'global-mise-mode)
 (setq select-enable-primary t)
@@ -719,3 +730,13 @@ modus-themes-completions
 ;;   (setq xclip-select-enable-clipboard t)
 ;;   (setq xclip-mode t)
 ;;   (setq xclip-method (quote wl-copy)))
+
+(setq treesit-language-source-alist
+      '((astro "https://github.com/virchau13/tree-sitter-astro")
+        (css "https://github.com/tree-sitter/tree-sitter-css")
+        (yaml "https://github.com/tree-sitter-grammars/tree-sitter-yaml")
+        (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")))
+
+(after! lsp-mode
+  (setopt lsp-enabled-clients '(ruby-lsp-ls standardrb-ls)))
+
